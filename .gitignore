@@ -6,6 +6,10 @@ __pycache__
 db.sqlite3
 media
 
+*.tmp
+*.test
+.coverage
+__pycache__/
 # Backup files # 
 *.bak 
 
@@ -97,6 +101,11 @@ celerybeat-schedule.*
 # SageMath parsed files 
 *.sage.py 
 
+logs/
+
+venv/
+
+db.sqlite3
 # Environments 
 .env 
 .venv 
@@ -105,6 +114,7 @@ venv/
 ENV/ 
 env.bak/ 
 venv.bak/ 
+media/
 
 # mkdocs documentation 
 /site 
