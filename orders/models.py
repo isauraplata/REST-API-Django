@@ -24,6 +24,13 @@ class Order(models.Model):
     def __str__(self):
         return f"{self.quantity} x {self.dish.name} in Order {self.id}"
     
+    def calculate_total_price(self):
+        return self.quantity * self.dish.price
+
+    def save(self, *args, **kwargs):
+        self.total_price = self.calculate_total_price()
+        super().save(*args, **kwargs)
+        
     @staticmethod
     def create_custom_permissions(**kwargs):
         content_type = ContentType.objects.get_for_model(Order)
@@ -46,8 +53,6 @@ class Order(models.Model):
             content_type=content_type,
         )
 
-
-# Conecta la señal post_migrate al método create_custom_permissions
 @receiver(post_migrate)
 def on_post_migrate(sender, **kwargs):
     Order.create_custom_permissions(**kwargs)

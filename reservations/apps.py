@@ -18,7 +18,6 @@ class ReservationsConfig(AppConfig):
         # Obtiene la clase Reservation usando la función get_model de apps
         Reservation = apps.get_model('reservations', 'Reservation')
 
-        # Verifica si ContentType ya está creado antes de llamar a create_custom_permissions
         content_type = apps.get_model('contenttypes.ContentType')
         if not content_type.objects.filter(app_label='reservations', model='reservation').exists():
             Reservation.create_custom_permissions()

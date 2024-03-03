@@ -21,14 +21,17 @@ class Dish(models.Model):
     allergens = models.TextField(blank=True, null=True)
     cuisine_type = models.CharField(max_length=50)
     spice_level = models.CharField(max_length=10, blank=True, null=True)
+    image = models.ImageField(upload_to="archivos/", default="default_image.jpg")
     image_path = models.CharField(max_length=255, blank=True, null=True)
     
     def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.image_path = f'archivos/{self.image}'
+        if self.image_path:
+            self.image_path = f'archivos/{self.image_path}'
         super().save(*args, **kwargs)
+
 
     @staticmethod
     def create_custom_permissions(**kwargs):
