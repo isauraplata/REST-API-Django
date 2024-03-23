@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, permission_required
-from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core.serializers import serialize
 from django.http import JsonResponse
@@ -17,7 +16,6 @@ from reservations.models import Reservation
 from orders.models import CustomPermissions as OrdersCustomPermissions, Permission as OrdersPermission
 
 
-@csrf_exempt
 @login_required
 @require_http_methods("POST")
 def signout(request):
@@ -28,7 +26,6 @@ def signout(request):
     return response
 
 
-@csrf_exempt
 @require_http_methods("POST")
 def signup(request):
     try:
@@ -67,7 +64,6 @@ def signup(request):
         return JsonResponse({'[ERROR]': 'Email or username already in use'}, status=500)
 
 
-@csrf_exempt
 @require_http_methods("POST")
 def signin(request):
 
@@ -94,7 +90,6 @@ def signin(request):
         return JsonResponse({'[ERROR]': 'Something goes wrong!'}, status=401)
 
 
-@csrf_exempt
 @login_required
 @require_http_methods("GET")
 def getAll(request):
@@ -104,7 +99,6 @@ def getAll(request):
     return JsonResponse(orders_json, safe=False)
 
 
-@csrf_exempt
 @login_required
 @require_http_methods("POST")
 def create_reservations(request):
@@ -144,7 +138,6 @@ def create_reservations(request):
         return JsonResponse({'[ERROR]': 'Something goes wrong!'}, status=401)
 
 
-@csrf_exempt
 @login_required
 @require_http_methods("DELETE")
 def delete_reservation(request, reservation_id):
@@ -159,7 +152,7 @@ def delete_reservation(request, reservation_id):
         return JsonResponse({'[ERROR]': 'Something goes wrong!'}, status=401)
 
 
-@csrf_exempt
+
 @login_required
 @require_http_methods("PUT")
 def update_reservation(request, reservation_id):

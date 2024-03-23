@@ -2,7 +2,6 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import Order
 from .models import Dish
@@ -13,7 +12,7 @@ from django.views.decorators.http import require_http_methods
 from django.http import HttpResponseForbidden
 
 
-@csrf_exempt
+
 @login_required
 @require_http_methods("GET")
 def get_orders(request):
@@ -22,7 +21,7 @@ def get_orders(request):
     orders_json = json.loads(serialize('json', user_orders))
     return JsonResponse(orders_json, safe=False)
 
-@csrf_exempt
+
 @login_required
 @require_http_methods("POST")
 def create_order(request):
@@ -53,7 +52,7 @@ def create_order(request):
         return JsonResponse({'[ERROR]': 'Something goes wrong!'}, status=401)
 
 
-@csrf_exempt
+
 @login_required
 @require_http_methods("DELETE")
 def delete_order(request, order_id):
@@ -68,7 +67,7 @@ def delete_order(request, order_id):
         return JsonResponse({'[ERROR]': 'Something goes wrong!'}, status=401)
 
 
-@csrf_exempt
+
 @login_required
 @require_http_methods("PUT")
 def update_order(request, order_id):

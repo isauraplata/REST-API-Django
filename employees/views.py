@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required, permission_required
-from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import Employee, CustomPermissions
 from django.core.serializers import serialize
@@ -13,7 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.views.decorators.http import require_http_methods
 
 
-@csrf_exempt
+
 @login_required
 @require_http_methods("GET")
 def getAll(request):
@@ -23,7 +22,7 @@ def getAll(request):
     return JsonResponse(parsed_data, safe=False)
 
 
-@csrf_exempt
+
 @login_required
 @permission_required(CustomPermissions.CAN_CREATE_EMPLOYEE, raise_exception=True)
 @require_http_methods("POST")
@@ -61,7 +60,7 @@ def create_employee(request):
     except IntegrityError:
         return HttpResponse("Error")
 
-@csrf_exempt
+
 @login_required
 @require_http_methods("DELETE")
 def delete_employee(request, employee_id):
@@ -76,7 +75,7 @@ def delete_employee(request, employee_id):
         return JsonResponse({'[ERROR]': 'Something goes wrong!'}, status=401)
         
 
-@csrf_exempt
+
 @login_required
 @require_http_methods("PUT")
 def update_employee(request, employee_id):

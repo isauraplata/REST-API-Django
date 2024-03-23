@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required, permission_required
-from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import Dish, CustomPermissions
 from django.core.serializers import serialize
@@ -11,7 +10,7 @@ from django.views.decorators.http import require_http_methods
 from django.http import HttpResponseForbidden
 
 
-@csrf_exempt
+
 @login_required
 @require_http_methods("GET")
 def get_menu(request):
@@ -21,7 +20,6 @@ def get_menu(request):
     return JsonResponse(parsed_data, safe=False)
 
 
-@csrf_exempt
 @login_required
 @require_http_methods("POST")
 def create_dish(request):
@@ -60,7 +58,6 @@ def create_dish(request):
         return JsonResponse({'[ERROR]': 'Something goes wrong!'}, status=401)
 
 
-@csrf_exempt
 @login_required
 @require_http_methods("DELETE")
 def delete_dish(request, dish_id):
@@ -75,7 +72,6 @@ def delete_dish(request, dish_id):
         return JsonResponse({'[ERROR]': 'Something goes wrong!'}, status=401)
 
 
-@csrf_exempt
 @login_required
 @require_http_methods("POST")
 def update_dish(request, dish_id):
