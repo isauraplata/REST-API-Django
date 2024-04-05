@@ -8,13 +8,12 @@ from .models import Dish
 from django.core.serializers import serialize
 from django.http import JsonResponse
 import json
-from django.views.decorators.http import require_http_methods
 from django.http import HttpResponseForbidden
-
+from rest_framework.decorators import api_view
 
 
 @login_required
-@require_http_methods("GET")
+@api_view(['GET'])
 def get_orders(request):
     user_id = request.user.id
     user_orders = Order.objects.filter(user_id=user_id)
@@ -23,7 +22,18 @@ def get_orders(request):
 
 
 @login_required
-@require_http_methods("POST")
+@api_view(['GET'])
+def get_order_by_id(request, order_id):
+    try:
+        order = Order.objects.get(pk=order_id)
+        order_json = json.loads(serialize('json', [order]))
+        return JsonResponse(order_json, safe=False)
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Order not found'}, status=404)
+
+
+@login_required
+@api_view(['POST'])
 def create_order(request):
     try:
         
@@ -52,9 +62,8 @@ def create_order(request):
         return JsonResponse({'[ERROR]': 'Something goes wrong!'}, status=401)
 
 
-
 @login_required
-@require_http_methods("DELETE")
+@api_view(['DELETE'])
 def delete_order(request, order_id):
     try:
         if not request.user.has_perm('orders.can_delete_reservation'):
@@ -67,9 +76,8 @@ def delete_order(request, order_id):
         return JsonResponse({'[ERROR]': 'Something goes wrong!'}, status=401)
 
 
-
 @login_required
-@require_http_methods("PUT")
+@api_view(['PUT'])
 def update_order(request, order_id):
     try:
         if not request.user.has_perm('orders.can_update_reservation'):
@@ -84,4 +92,6 @@ def update_order(request, order_id):
             return JsonResponse({'message': 'Update successful!'}, status=200)
     except IntegrityError:
         return JsonResponse({'[ERROR]': 'Something goes wrong!'}, status=401)
+
+
 

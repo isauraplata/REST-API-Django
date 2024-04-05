@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import HttpResponse
@@ -8,90 +7,12 @@ import json
 from django.core.serializers import serialize
 from django.http import JsonResponse
 import json
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.views.decorators.http import require_http_methods
 from django.http import HttpResponseForbidden
-from reservations.models import CustomPermissions as ReservationsCustomPermissions, Permission as ReservationsPermission
 from reservations.models import Reservation
-from orders.models import CustomPermissions as OrdersCustomPermissions, Permission as OrdersPermission
-
-
-@login_required
-@require_http_methods("POST")
-def signout(request):
-    logout(request)
-    response = JsonResponse({'message': 'Logout successful'})
-    response.delete_cookie('csrftoken')
-    response.delete_cookie('jwt')
-    return response
-
-
-@require_http_methods("POST")
-def signup(request):
-    try:
-        body_unicode = request.body.decode('utf-8')
-        body_data = json.loads(body_unicode)
-        username = body_data.get('username')
-        email = body_data.get('email')
-        password = body_data.get('password')
-
-        user = User.objects.create_user(
-            username=username, password=password, email=email)
-
-        user.user_permissions.add(ReservationsPermission.objects.get(
-            codename=ReservationsCustomPermissions.CAN_CREATE_RESERVATION))
-
-        user.user_permissions.add(ReservationsPermission.objects.get(
-            codename=ReservationsCustomPermissions.CAN_DELETE_RESERVATION))
-
-        user.user_permissions.add(ReservationsPermission.objects.get(
-            codename=ReservationsCustomPermissions.CAN_UPDATE_RESERVATION))
-
-        user.user_permissions.add(OrdersPermission.objects.get(
-            codename=OrdersCustomPermissions.CAN_CREATE_ORDER))
-
-        user.user_permissions.add(OrdersPermission.objects.get(
-            codename=OrdersCustomPermissions.CAN_DELETE_ORDER))
-
-        user.user_permissions.add(OrdersPermission.objects.get(
-            codename=OrdersCustomPermissions.CAN_UPDATE_ORDER))
-
-        user.save()
-        login(request, user)
-        return HttpResponse("Acount created succesfuly!")
-    except IntegrityError:
-        print(ImportError.objects)
-        return JsonResponse({'[ERROR]': 'Email or username already in use'}, status=500)
-
-
-@require_http_methods("POST")
-def signin(request):
-
-    try:
-        body_unicode = request.body.decode('utf-8')
-        body_data = json.loads(body_unicode)
-        username = body_data.get('username')
-        email = body_data.get('email')
-        password = body_data.get('password')
-
-        user = authenticate(
-            request, username=username, password=password, email=email)
-
-        login(request, user)
-        refresh = RefreshToken.for_user(user)
-        access_token = str(refresh.access_token)
-
-        # Establece la cookie con el token JWT
-        response = JsonResponse({'token': access_token})
-        response.set_cookie(key='jwt', value=access_token,
-                            max_age=3600, httponly=True)
-        return response
-    except IntegrityError:
-        return JsonResponse({'[ERROR]': 'Something goes wrong!'}, status=401)
-
+from rest_framework.decorators import api_view
 
 @login_required
-@require_http_methods("GET")
+@api_view(['GET'])
 def getAll(request):
     user_id = request.user.id
     user_reservation = Reservation.objects.filter(user_id=user_id)
@@ -100,7 +21,7 @@ def getAll(request):
 
 
 @login_required
-@require_http_methods("POST")
+@api_view(['POST'])
 def create_reservations(request):
     try:
 
@@ -139,7 +60,7 @@ def create_reservations(request):
 
 
 @login_required
-@require_http_methods("DELETE")
+@api_view(['DELETE'])
 def delete_reservation(request, reservation_id):
     try:
         if not request.user.has_perm('reservations.can_delete_reservation'):
@@ -154,7 +75,7 @@ def delete_reservation(request, reservation_id):
 
 
 @login_required
-@require_http_methods("PUT")
+@api_view(['PUT'])
 def update_reservation(request, reservation_id):
     try:
         if not request.user.has_perm('reservations.can_update_reservation'):

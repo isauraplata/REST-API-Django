@@ -21,6 +21,13 @@ class Order(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     quantity = models.PositiveIntegerField(default=1)
 
+    # New field to track payment status
+    payment_status = models.CharField(max_length=20, choices=(
+        ('pending', 'Pending'),
+        ('paid', 'Paid'),
+        ('failed', 'Failed'),
+    ), default='pending')
+
     def __str__(self):
         return f"{self.quantity} x {self.dish.name} in Order {self.id}"
     

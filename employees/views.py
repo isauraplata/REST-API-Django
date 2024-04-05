@@ -1,20 +1,17 @@
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required, permission_required
 import json
 from .models import Employee, CustomPermissions
 from django.core.serializers import serialize
 from django.http import JsonResponse
 import json
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.views.decorators.http import require_http_methods
-
+from rest_framework.decorators import api_view
 
 
 @login_required
-@require_http_methods("GET")
+@api_view(['GET'])
 def getAll(request):
     data = Employee.objects.all()
     serialized_data = serialize('json', data)
@@ -22,10 +19,9 @@ def getAll(request):
     return JsonResponse(parsed_data, safe=False)
 
 
-
 @login_required
 @permission_required(CustomPermissions.CAN_CREATE_EMPLOYEE, raise_exception=True)
-@require_http_methods("POST")
+@api_view(['POST'])
 def create_employee(request):
     try:
         if not request.user.has_perm('reservations.can_create_reservation'):
@@ -56,13 +52,13 @@ def create_employee(request):
             )
 
             new_employee.save()
-            return HttpResponse("save succesfully")
+            return JsonResponse({'message': 'Saved successfully!'}, status=200)
     except IntegrityError:
-        return HttpResponse("Error")
+        return JsonResponse({'error': 'Error'}, status=500)
 
 
 @login_required
-@require_http_methods("DELETE")
+@api_view(['DELETE'])
 def delete_employee(request, employee_id):
     try:
         if not request.user.has_perm('reservations.can_delete_reservation'):
@@ -75,9 +71,8 @@ def delete_employee(request, employee_id):
         return JsonResponse({'[ERROR]': 'Something goes wrong!'}, status=401)
         
 
-
 @login_required
-@require_http_methods("PUT")
+@api_view(['PUT'])
 def update_employee(request, employee_id):
     try:
         if not request.user.has_perm('reservations.can_update_reservation'):

@@ -10,8 +10,6 @@ class ReservationsConfig(AppConfig):
 
     def ready(self):
         import reservations.signals
-        # Registra el receptor de la señal post_migrate
-        #post_migrate.connect(self.on_post_migrate, sender=self)
 
     @staticmethod
     def on_post_migrate(sender, **kwargs):

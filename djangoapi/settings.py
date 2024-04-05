@@ -3,8 +3,8 @@ import os
 from dotenv import load_dotenv
 
 
-
 load_dotenv()
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('MY_SECRET_KEY')
@@ -13,8 +13,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-print("__________")
-print(os.environ.get('DB_NAME'))
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -30,6 +28,9 @@ INSTALLED_APPS = [
     'menu.apps.MenuConfig',
     'employees',
     'orders.apps.OrdersConfig',
+    'paypal.standard.ipn',
+    'paypal_integration',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -49,13 +50,12 @@ MIDDLEWARE = [
 
 MEDIA_ROOT = BASE_DIR / "media"
 
-
 ROOT_URLCONF = 'djangoapi.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -78,7 +78,7 @@ SESSION_COOKIE_SECURE = True  # Configura a True si estás utilizando HTTPS
 CSRF_COOKIE_SECURE = True  # Configura a True si estás utilizando HTTPS
 
 
-
+#uso de variables de entorno
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -89,7 +89,6 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT'),    
     }
 }
-
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -136,3 +135,7 @@ REST_FRAMEWORK = {
         'user': '1000/day',
     }
 }
+
+# PayPal Settings
+PAYPAL_RECEIVER_EMAIL = os.environ.get('PAYPAL_EMAIL')
+PAYPAL_TEST = True  # Use sandbox mode during testing

@@ -1,18 +1,17 @@
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 import json
-from .models import Dish, CustomPermissions
+from .models import Dish
 from django.core.serializers import serialize
 from django.http import JsonResponse
 import json
-from django.views.decorators.http import require_http_methods
 from django.http import HttpResponseForbidden
-
+from rest_framework.decorators import api_view
 
 
 @login_required
-@require_http_methods("GET")
+@api_view(['GET'])
 def get_menu(request):
     data = Dish.objects.all()
     serialized_data = serialize('json', data)
@@ -21,7 +20,7 @@ def get_menu(request):
 
 
 @login_required
-@require_http_methods("POST")
+@api_view(['POST'])
 def create_dish(request):
     try:
         if not request.user.has_perm('menu.can_create_dish'):
@@ -59,7 +58,7 @@ def create_dish(request):
 
 
 @login_required
-@require_http_methods("DELETE")
+@api_view(['DELETE'])
 def delete_dish(request, dish_id):
     try:
         if not request.user.has_perm('reservations.can_delete_reservation'):
@@ -73,7 +72,7 @@ def delete_dish(request, dish_id):
 
 
 @login_required
-@require_http_methods("POST")
+@api_view(['POST'])
 def update_dish(request, dish_id):
     try:
         if not request.user.has_perm('menu.can_update_dish'):
