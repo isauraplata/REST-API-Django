@@ -33,17 +33,17 @@ Features:
 
 Important:The `.env` file stores sensitive information like database credentials and secret keys. 
 
-.env File:
+this is the structure of the `.env` File:
 
-* DJANGO_SECRET_KEY=
-* DJANGO_DEBUG=
-* DB_ENGINE=
-* DB_NAME=
-* DB_HOST=
-* DB_USER=
-* DB_PASSWORD=
-* DB_PORT=
-* MY_SECRET_KEY=
+    DJANGO_SECRET_KEY=
+    DJANGO_DEBUG=
+    DB_ENGINE=
+    DB_NAME=
+    DB_HOST=
+    DB_USER=
+    DB_PASSWORD=
+    DB_PORT=
+    MY_SECRET_KEY=
 
 
 Instructions for Using `.env`:
@@ -51,3 +51,9 @@ Instructions for Using `.env`:
 1. Create a text file named `.env` in your project's root directory.
 2. Copy and paste the above content into the `.env` file.
 3. Replace the placeholder values with your specific database credentials and secret keys.
+
+
+## Authors
+
+- [@isauraplata](https://github.com/isauraplata)
+
